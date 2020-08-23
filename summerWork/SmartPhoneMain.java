@@ -7,18 +7,22 @@ import java.util.Scanner;
 public class SmartPhoneMain {
   static Scanner in = new Scanner(System.in);
 
+
+  //One can replace in.nextInt with Integer.valueOf(in.nextLine()) for int
+  // and use in.nextLine instead of in.next for String for better practice
+  // the way I chose works only with Strings that consist of one word (won't read after first space)
+
+
   /*           -----------------------------Bet-----------------------------*/
-  // todo: finish 7,6 + check
 
   public static void main(String[] args) {
 
     //             ---------------------- BET 1) ----------------------
-    SmartPhone[] phoneArr = new SmartPhone[2]; // change! to 30
+    SmartPhone[] phoneArr = new SmartPhone[30];
     one(phoneArr);
 
     //             ---------------------- BET 2) ----------------------
-    String[] addApp = new String[4];
-    two(addApp, phoneArr);
+    two(phoneArr);
 
     //             ---------------------- BET 3) ----------------------
 
@@ -35,11 +39,11 @@ public class SmartPhoneMain {
     //             ---------------------- BET 6) ----------------------
 
     mostExp(phoneArr);
-    // todo: ask if I did right if not understand then fix
 
     //             ---------------------- BET 7) ----------------------
 
-    // todo: ask and understand then do
+    System.out.println(mostCheap(phoneArr).toString());
+
 
     //             ---------------------- BET 8) ----------------------
     del(phoneArr);
@@ -64,14 +68,16 @@ public class SmartPhoneMain {
   }
 
   //             ---------------------- BET 2) ----------------------
-  public static void two(String[] addApp, SmartPhone[] phoneArr) {
+  public static void two(SmartPhone[] phoneArr) {
+    String[] addApp = new String[4];
+
     for (int i = 0; i < addApp.length; i++) {
       System.out.println("Enter new App name for app at place " + i);
       addApp[i] = in.next();
     }
 
-    for (int i = 0; i < phoneArr.length; i++) {
-      phoneArr[i].addApplication(addApp[0]);
+    for (SmartPhone smartPhone : phoneArr) {
+      smartPhone.addApplication(addApp[0]);
     }
 
     for (int i = 0; i < phoneArr.length; i += 2) { // even starting from i=0 regarding array place
@@ -82,16 +88,16 @@ public class SmartPhoneMain {
       phoneArr[i].addApplication(addApp[2]);
     }
 
-    int[] arr = new int[2]; // change to 10
+    int[] arr = new int[10];
     Arrays.fill(arr, -999);
 
-    int num = (int) (Math.random() * 2); // change 1 to 30
+    int num = (int)(Math.random() * 30);
 
     while (!isArrFull(arr)) {
       if (!isNumInside(arr, num)) {
         push(arr, num);
       }
-      num = (int) (Math.random() * 2); // change 1 to 30
+      num = (int)(Math.random() * 30);
     }
 
     for (int j : arr) {
@@ -136,6 +142,33 @@ public class SmartPhoneMain {
     System.out.println("Most expensive phone's name is " + maxName);
   }
 
+  //             ---------------------- BET 7) ----------------------
+
+  public static SmartPhone mostCheap(SmartPhone[] phoneArr) {
+    System.out.println("Enter Owner tz for cheapest phone owner has");
+    String owner = in.next();
+
+    SmartPhone[] ownerPhones = new SmartPhone[100];
+    int place = 0;
+    for (int i = 0; i < phoneArr.length; i++) {
+      if (phoneArr[i].getOwner().equals(owner)){
+        ownerPhones[place]= new SmartPhone(phoneArr[i]);
+        place+=1;
+      }
+    }
+
+    double minPrice = ownerPhones[0].getPrice();
+    SmartPhone minPhone = new SmartPhone(ownerPhones[0]);
+    for (int i = 1; i < place; i++) {
+      if (ownerPhones[i].getPrice() < minPrice) {
+        minPrice = ownerPhones[i].getPrice();
+        minPhone = ownerPhones[i];
+      }
+    }
+
+    return minPhone;
+  }
+
   //             ---------------------- BET 8) ----------------------
   public static void del(SmartPhone[] phoneArr) {
     System.out.println("enter name of app to delete");
@@ -153,9 +186,9 @@ public class SmartPhoneMain {
     System.out.println("Enter id to add app to, when id=0 is stop");
     String id = in.next();
     while (!id.equals("0")) {
-      for (int i = 0; i < phoneArr.length; i++) {
-        if (phoneArr[i].getOwner().equals(id)) {
-          phoneArr[i].addApplication(appToAdd);
+      for (SmartPhone smartPhone : phoneArr) {
+        if (smartPhone.getOwner().equals(id)) {
+          smartPhone.addApplication(appToAdd);
           // break;
         }
       }
@@ -172,7 +205,7 @@ public class SmartPhoneMain {
     int Year = in.nextInt();
     int Month = in.nextInt() + 1; // because Jan is index 0...
     int Date = in.nextInt();
-    return new Date(Year, Month, Date);
+    return new Date(Year, Month, Date); //deprecated (Date)
   }
 
   // check if array has place
@@ -191,14 +224,13 @@ public class SmartPhoneMain {
     return false;
   }
 
-  public static int push(int[] arr, int num) {
+  public static void push(int[] arr, int num) {
 
     for (int i = 0; i < arr.length; i++) {
       if (arr[i] == -999) {
         arr[i] = num;
-        return i;
+        return;
       }
     }
-    return -999;
   }
 }
